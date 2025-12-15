@@ -106,7 +106,7 @@ async fn edit_a_records(
     if post_request.error_for_status().is_err() {
         println!("IP has not changed!")
     } else {
-        println!("IP has changed to {}! Updating IPs!", server_ip);
+        println!("IP has changed to {server_ip}! Updating IPs!");
         println!("----------");
         println!("Root record updated!");
         println!("----------");
