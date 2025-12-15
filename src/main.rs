@@ -81,7 +81,7 @@ async fn get_list_of_subdomains(
         .context("Did you enable API access for this domain?")?;
 
     for entry in result.records {
-        if entry.r_type == 'A'.to_string() {
+        if entry.r_type == "A" {
             let sub: Vec<&str> = entry.name.split(".").collect();
             if sub.len() > 2 {
                 sub_vector.push(String::from(sub[0]));
