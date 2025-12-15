@@ -1,6 +1,6 @@
 # pbip
 
-> **p**ork**b**un **ip**
+> **p**ork**b**un **ip** (updater)
 
 This little program updates the IP for A records of a specified domain hosted on porkbun.com and monitors it indefinitely. This is perfect for servers on a dynamic IP that can potentially change, which is typical of a self-hosted setup.
 
