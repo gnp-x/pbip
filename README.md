@@ -6,11 +6,16 @@ This little program updates the IP for A records of a specified domain hosted on
 
 **NOTE**: You will need to install curl first on your system before attempting to run the program. This is how we obtain the IP of the machine running the program.
 
-## .env
+## env
 Recommend making an .env file with the following since the keys are really long.
 ```sh
 secretapikey=SECRET_KEY_HERE
 apikey=KEY_HERE
+```
+or you can just set them in the terminal
+```sh
+export secretapikey=SECRET_KEY_HERE
+export apikey=KEY_HERE
 ```
 
 ## Example
