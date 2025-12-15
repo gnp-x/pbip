@@ -3,6 +3,7 @@ use dotenv::dotenv;
 use reqwest::Client;
 use serde::Deserialize;
 use std::{
+    collections::HashMap,
     env::{self},
     process::{self, Command},
     time::Duration,
@@ -25,6 +26,12 @@ async fn main() -> Result<()> {
     dotenv().ok();
     let secretapikey = env::var("secretapikey")?;
     let apikey = env::var("apikey")?;
+    let server_ip = get_ip()?;
+
+    let mut body = HashMap::new();
+    body.insert("secretapikey", &secretapikey);
+    body.insert("apikey", &apikey);
+    body.insert("content", &server_ip);
 
     let args: Vec<String> = env::args().collect();
     if args.len() > 3 {
@@ -43,7 +50,7 @@ async fn main() -> Result<()> {
 
     loop {
         println!("Checking IP change for {site}...");
-        edit_a_records(url, &secretapikey, &apikey, &client, &site).await?;
+        edit_a_records(url, &body, &client, &site).await?;
         println!("Checking records again in {duration} minutes...");
         println!("----------");
         tokio::time::sleep(Duration::from_mins(duration)).await;
@@ -61,16 +68,10 @@ fn get_ip() -> Result<String> {
 
 async fn get_list_of_subdomains(
     url: &str,
-    secretapikey: &String,
-    apikey: &String,
+    body: &HashMap<&str, &String>,
     client: &Client,
     site: &String,
 ) -> Result<Vec<String>> {
-    let body = serde_json::json!({
-        "secretapikey" : secretapikey,
-        "apikey" : apikey
-    });
-
     let mut sub_vector: Vec<String> = Vec::new();
     let api_url = format!("{url}retrieve/{site}");
 
@@ -93,28 +94,19 @@ async fn get_list_of_subdomains(
 
 async fn edit_a_records(
     url: &str,
-    secretapikey: &String,
-    apikey: &String,
+    body: &HashMap<&str, &String>,
     client: &Client,
     site: &String,
 ) -> Result<()> {
-    let server_ip = get_ip()?;
     let api_url = format!("{url}editByNameType/{site}/A/");
-
-    let subdomains = get_list_of_subdomains(url, &secretapikey, &apikey, &client, &site).await?;
-
-    let body = serde_json::json!({
-        "secretapikey" : secretapikey,
-        "apikey" : apikey,
-        "content": server_ip
-    });
-
+    let subdomains = get_list_of_subdomains(url, &body, &client, &site).await?;
+    let server_ip = &body.get("content").or(None).context("Error parsing IP")?;
     let post_request = client.post(&api_url).json(&body).send().await?;
 
     if post_request.error_for_status().is_err() {
         println!("IP has not changed!")
     } else {
-        println!("IP has changed! Updating IPs!");
+        println!("IP has changed to {}! Updating IPs!", server_ip);
         println!("----------");
         println!("Root record updated!");
         println!("----------");
@@ -124,7 +116,6 @@ async fn edit_a_records(
             println!("Subdomain {sub} record updated!");
             println!("----------")
         }
-        println!("All domains updated to reflect {server_ip}!")
     };
     Ok(())
 }
