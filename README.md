@@ -12,7 +12,7 @@ Recommend making an .env file with the following since the keys are really long.
 secretapikey=SECRET_KEY_HERE
 apikey=KEY_HERE
 ```
-or you can just set them in the terminal
+or you can just set them in the terminal or .rc file.
 ```sh
 export secretapikey=SECRET_KEY_HERE
 export apikey=KEY_HERE
