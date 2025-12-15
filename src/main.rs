@@ -8,6 +8,7 @@ use std::{
     process::{self, Command},
     time::Duration,
 };
+use tokio::time::interval;
 
 #[derive(Deserialize, Debug)]
 struct GetRecords {
@@ -47,13 +48,14 @@ async fn main() -> Result<()> {
 
     let url = "https://api.porkbun.com/api/json/v3/dns/";
     let client = reqwest::Client::new();
-
+    let mut interval = interval(Duration::from_mins(duration));
     loop {
+        interval.tick().await;
         println!("Checking IP change for {site}...");
         edit_a_records(url, &body, &client, &site).await?;
         println!("Checking records again in {duration} minutes...");
         println!("----------");
-        tokio::time::sleep(Duration::from_mins(duration)).await;
+        ()
     }
 }
 
