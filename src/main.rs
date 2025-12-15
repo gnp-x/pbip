@@ -1,4 +1,4 @@
-use anyhow::{Ok, Result};
+use anyhow::{Context, Ok, Result};
 use dotenv::dotenv;
 use reqwest::Client;
 use serde::Deserialize;
@@ -31,12 +31,12 @@ async fn main() -> Result<()> {
         eprintln!("Too many arguments");
         process::exit(0)
     }
-    let site = args.get(1).expect("Site argument missing...");
+    let site = args.get(1).context("Need site name argument")?;
     let duration = args
         .get(2)
-        .expect("Duration argument missing...")
+        .context("Need time duration argument")?
         .parse()
-        .expect("Not a valid integer");
+        .context("Not a valid integer")?;
 
     let url = "https://api.porkbun.com/api/json/v3/dns/";
     let client = reqwest::Client::new();
@@ -50,16 +50,16 @@ async fn main() -> Result<()> {
     }
 }
 
-fn get_ip() -> String {
+fn get_ip() -> Result<String> {
     let ip = Command::new("sh")
         .arg("-c")
         .arg("curl ifconfig.me")
-        .output()
-        .expect("Error curling request...");
-    String::from_utf8(ip.stdout)
+        .output()?;
+
+    Ok(String::from_utf8(ip.stdout)
         .expect("Could not convert to string...")
         .trim()
-        .to_string()
+        .to_string())
 }
 
 async fn get_list_of_subdomains(
@@ -68,7 +68,7 @@ async fn get_list_of_subdomains(
     apikey: &String,
     client: &Client,
     site: &String,
-) -> Vec<String> {
+) -> Result<Vec<String>> {
     let body = serde_json::json!({
         "secretapikey" : secretapikey,
         "apikey" : apikey
@@ -77,17 +77,11 @@ async fn get_list_of_subdomains(
     let mut sub_vector: Vec<String> = Vec::new();
     let api_url = format!("{url}retrieve/{site}");
 
-    let post_request = client
-        .post(api_url)
-        .json(&body)
-        .send()
-        .await
-        .expect("Unable to post request...");
-
+    let post_request = client.post(api_url).json(&body).send().await?;
     let result: GetRecords = post_request
         .json()
         .await
-        .expect("Unable to obtain records... Is the API enabled in porkbun for the domain?");
+        .context("Did you enable API access for this domain?")?;
 
     for entry in result.records {
         if entry.r_type == 'A'.to_string() {
@@ -97,7 +91,7 @@ async fn get_list_of_subdomains(
             }
         }
     }
-    sub_vector
+    Ok(sub_vector)
 }
 
 async fn edit_a_records(
@@ -107,10 +101,10 @@ async fn edit_a_records(
     client: &Client,
     site: &String,
 ) -> Result<()> {
-    let server_ip = get_ip();
+    let server_ip = get_ip()?;
     let api_url = format!("{url}editByNameType/{site}/A/");
 
-    let subdomains = get_list_of_subdomains(url, &secretapikey, &apikey, &client, &site).await;
+    let subdomains = get_list_of_subdomains(url, &secretapikey, &apikey, &client, &site).await?;
 
     let body = serde_json::json!({
         "secretapikey" : secretapikey,
