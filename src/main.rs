@@ -56,10 +56,7 @@ fn get_ip() -> Result<String> {
         .arg("curl ifconfig.me")
         .output()?;
 
-    Ok(String::from_utf8(ip.stdout)
-        .expect("Could not convert to string...")
-        .trim()
-        .to_string())
+    Ok(String::from_utf8(ip.stdout)?.trim().to_string())
 }
 
 async fn get_list_of_subdomains(
