@@ -28,5 +28,5 @@ This will check to update records every `5` minutes for domain `liminal.cafe`.
 ```sh
 git clone ssh://git@codeberg.org/gnp/pbip.git
 cd pbip
-cargo build --release
+cargo build
 ```
