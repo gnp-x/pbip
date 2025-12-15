@@ -20,9 +20,9 @@ export apikey=KEY_HERE
 
 ## Example
 ```sh
-./pbip liminal.cafe 5
+./pbip example.com 5
 ```
-This will attempt to update records every `5` minutes for domain `liminal.cafe`.
+This will attempt to update records every `5` minutes for domain `example.com`.
 
 ## Build
 ```sh
