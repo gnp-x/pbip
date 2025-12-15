@@ -28,10 +28,10 @@ async fn main() -> Result<()> {
         eprintln!("Too many arguments");
         process::exit(0)
     }
-    let site = args.get(1).expect("Site argument missing..");
+    let site = args.get(1).expect("Site argument missing...");
     let duration = args
         .get(2)
-        .expect("Duration argument missing..")
+        .expect("Duration argument missing...")
         .parse()
         .expect("Not a valid integer");
     let url = "https://api.porkbun.com/api/json/v3/dns/";
@@ -51,11 +51,11 @@ async fn main() -> Result<()> {
 fn get_ip() -> String {
     let ip = Command::new("sh")
         .arg("-c")
-        .arg("curl icanhazip.com")
+        .arg("curl ifconfig.me")
         .output()
-        .expect("Error curling request");
+        .expect("Error curling request...");
     String::from_utf8(ip.stdout)
-        .expect("Could not convert to String.")
+        .expect("Could not convert to string...")
         .trim()
         .to_string()
 }
@@ -78,11 +78,11 @@ async fn get_list_of_subdomains(
         .json(&body)
         .send()
         .await
-        .expect("Unable to post request.");
+        .expect("Unable to post request...");
     let result: GetRecords = post_request
         .json()
         .await
-        .expect("Unable to obtain records.");
+        .expect("Unable to obtain records... Is the API enabled in porkbun for the domain?");
     for entry in result.records {
         if entry.r_type == 'A'.to_string() {
             let sub: Vec<&str> = entry.name.split(".").collect();
@@ -122,7 +122,7 @@ async fn edit_a_records(
         for sub in subdomains {
             let api_url = format!("{api_url}{sub}");
             client.post(api_url).json(&body).send().await?;
-            println!("Subdomain {sub} updated!");
+            println!("Subdomain {sub} record updated!");
             println!("----------")
         }
         println!("All domains updated to reflect {server_ip}!")
