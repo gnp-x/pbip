@@ -1,7 +1,8 @@
-# Porkbun IP Updater
-This little program updates the IP for A records of a specified domain and monitors them indefinitely. This is perfect for servers on a dynamic IP that can potentially change, which is typical of a self-hosted setup.
+# pbip
+> **p**ork**b**un **ip**
+This little program updates the IP for A records of a specified domain hosted on porkbun.com and monitors it indefinitely. This is perfect for servers on a dynamic IP that can potentially change, which is typical of a self-hosted setup.
 
-> You will need to install curl first on your system before attempting to run the program. This is how we obtain the IP of the machine running the program.
+**NOTE**: You will need to install curl first on your system before attempting to run the program. This is how we obtain the IP of the machine running the program.
 
 ## Example
 ```sh
