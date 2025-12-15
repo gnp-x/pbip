@@ -22,7 +22,7 @@ export apikey=KEY_HERE
 ```sh
 ./pbip liminal.cafe 5
 ```
-This will check to update records every `5` minutes for domain `liminal.cafe`.
+This will attempt to update records every `5` minutes for domain `liminal.cafe`.
 
 ## Build
 ```sh
