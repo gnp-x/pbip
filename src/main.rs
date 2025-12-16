@@ -65,7 +65,7 @@ fn get_ip() -> Result<String> {
         .arg("curl ifconfig.me")
         .output()?;
 
-    Ok(String::from_utf8(ip.stdout)?.trim().to_string())
+    Ok(String::from_utf8(ip.stdout)?.trim().to_owned())
 }
 
 async fn get_list_of_subdomains(
@@ -87,10 +87,11 @@ async fn get_list_of_subdomains(
         if entry.r_type == "A" {
             let sub: Vec<&str> = entry.name.split(".").collect();
             if sub.len() > 2 {
-                sub_vector.push(String::from(sub[0]));
+                sub_vector.push(sub[0].to_owned());
             }
         }
     }
+
     Ok(sub_vector)
 }
 
