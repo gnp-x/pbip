@@ -1,5 +1,4 @@
 use anyhow::{Context, Ok, Result};
-use dotenv::dotenv;
 use reqwest::Client;
 use serde::Deserialize;
 use std::{
@@ -24,14 +23,13 @@ struct Record {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    dotenv().ok();
-    let secretapikey = env::var("secretapikey")?;
-    let apikey = env::var("apikey")?;
+    const SECRET_API: &'static str = env!("secretapikey");
+    const API_KEY: &'static str = env!("apikey");
     let server_ip = get_ip()?;
 
     let mut body = HashMap::new();
-    body.insert("secretapikey", &secretapikey);
-    body.insert("apikey", &apikey);
+    body.insert("secretapikey", SECRET_API);
+    body.insert("apikey", API_KEY);
     body.insert("content", &server_ip);
 
     let args: Vec<String> = env::args().collect();
@@ -70,7 +68,7 @@ fn get_ip() -> Result<String> {
 
 async fn get_list_of_subdomains(
     url: &str,
-    body: &HashMap<&str, &String>,
+    body: &HashMap<&str, &str>,
     client: &Client,
     site: &String,
 ) -> Result<Vec<String>> {
@@ -97,7 +95,7 @@ async fn get_list_of_subdomains(
 
 async fn edit_a_records(
     url: &str,
-    body: &HashMap<&str, &String>,
+    body: &HashMap<&str, &str>,
     client: &Client,
     site: &String,
 ) -> Result<()> {
