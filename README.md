@@ -10,8 +10,8 @@ This little program updates the IP for A records of a specified domain hosted on
 Make a config.toml file in the root directory with the following.
 ```toml
 [env]
-secretapikey=SECRET_KEY_HERE
-apikey=KEY_HERE
+secretapikey="SECRET_KEY_HERE"
+apikey="KEY_HERE"
 ```
 
 ## Example
