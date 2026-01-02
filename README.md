@@ -22,7 +22,7 @@ This will attempt to update records every `5` minutes for domain `example.com`.
 
 ## Build
 ```sh
-git clone ssh://git@git.liminal.cafe:2222/sakura/pbip.git
+git clone https://git.liminal.cafe/sakura/pbip.git
 cd pbip
 cargo build --release --config config.toml
 ```
