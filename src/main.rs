@@ -25,12 +25,6 @@ struct Record {
 async fn main() -> Result<()> {
     const SECRET_API: &'static str = env!("secretapikey");
     const API_KEY: &'static str = env!("apikey");
-    let server_ip = get_ip()?;
-
-    let mut body = HashMap::new();
-    body.insert("secretapikey", SECRET_API);
-    body.insert("apikey", API_KEY);
-    body.insert("content", &server_ip);
 
     let args: Vec<String> = env::args().collect();
     if args.len() > 3 {
@@ -49,6 +43,11 @@ async fn main() -> Result<()> {
     let mut interval = interval(Duration::from_mins(duration));
     loop {
         interval.tick().await;
+        let server_ip = get_ip()?;
+        let mut body = HashMap::new();
+        body.insert("secretapikey", SECRET_API);
+        body.insert("apikey", API_KEY);
+        body.insert("content", &server_ip);
         println!("Checking IP change for {site}...");
         edit_a_records(url, &body, &client, &site).await?;
         println!("Checking records again in {duration} minutes...");
